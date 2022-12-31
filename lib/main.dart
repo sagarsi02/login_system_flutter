@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:login_system/signUp.dart';
+
+import 'Screen/authPage.dart';
 
 void main() => runApp(const MyApp());
 
@@ -10,12 +11,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.purple,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        scaffoldBackgroundColor: Colors.white,
       ),
-      home: MyHomePage(),
+      home: authPage(),
     );
   }
 }
