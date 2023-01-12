@@ -2,7 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
+import 'package:login_system/Screen/login.dart';
+
+// import '../modal/api_call.dart';
 
 class signUp extends StatefulWidget {
   const signUp({super.key});
@@ -12,6 +15,7 @@ class signUp extends StatefulWidget {
 }
 
 class _signUpState extends State<signUp> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,6 +79,26 @@ class formSection extends StatefulWidget {
 }
 
 class _formSectionState extends State<formSection> {
+
+  post_data(nameController, emailController, userController, cityController, passwordController, cPasswordController) async{
+  final  _response = await http.post(Uri.parse("http://127.0.0.1:8000/api/createuser").replace(host: '10.0.2.2'),
+        body: {
+          "name" : nameController.text,
+          "username" : userController.text,
+          "email" : emailController.text,
+          "city" : cityController.text,
+          "password" : passwordController.text,
+          "c_password" : cPasswordController.text
+        });
+      if(_response.statusCode == 200){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const login()),
+        );
+      }else{
+        print('Error');
+      }
+  }
   final _formKey = GlobalKey<FormState>();
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -226,32 +250,47 @@ class _formSectionState extends State<formSection> {
           const SizedBox(
             height: 30,
           ),
-          ElevatedButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Processing Data')),
-                );
-              }
-            },
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                    const Color.fromARGB(255, 153, 219, 204)),
-                elevation: MaterialStateProperty.all(10),
-                overlayColor:
-                    MaterialStateProperty.all(const Color(0xFF68D6CD)),
-                minimumSize: MaterialStateProperty.all(const Size(300, 40)),
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                textStyle: MaterialStateProperty.all(const TextStyle(
-                  fontSize: 20,
-                  color: Colors.red,
-                ))),
-            child: const Text('SIGNUP'),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: Text(
+              '_response.statusCode',
+              style: TextStyle(
+                fontSize: 13,
+                color: Color.fromARGB(255, 135, 182, 182)
+              ),
+            ),
           ),
+          const SizedBox(
+            height: 30,
+          ),
+          ElevatedButton(onPressed: () => post_data(
+            nameController, 
+            emailController, 
+            userController, 
+            cityController, 
+            passwordController, 
+            cPasswordController
+          ),
+          style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                  const Color.fromARGB(255, 153, 219, 204)),
+              elevation: MaterialStateProperty.all(10),
+              overlayColor:
+                  MaterialStateProperty.all(const Color(0xFF68D6CD)),
+              minimumSize: MaterialStateProperty.all(const Size(300, 40)),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              textStyle: MaterialStateProperty.all(const TextStyle(
+                fontSize: 20,
+                color: Colors.red,
+              ))),
+              
+          child: const Text('SIGNUP'),
+          
+        ),
         ],
       ),
     );

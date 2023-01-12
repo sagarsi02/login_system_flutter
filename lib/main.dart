@@ -1,11 +1,12 @@
+// @dart=2.9
 import 'package:flutter/material.dart';
 
 import 'Screen/authPage.dart';
 
-void main() => runApp(const MyApp());
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  // const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: authPage(),
+      home: const authPage(),
     );
   }
 }
