@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:http/http.dart' as http;
 import 'package:login_system/Screen/login.dart';
-
+import 'dart:convert';
 // import '../modal/api_call.dart';
 
 class signUp extends StatefulWidget {
@@ -15,7 +15,6 @@ class signUp extends StatefulWidget {
 }
 
 class _signUpState extends State<signUp> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,26 +78,39 @@ class formSection extends StatefulWidget {
 }
 
 class _formSectionState extends State<formSection> {
-
-  post_data(nameController, emailController, userController, cityController, passwordController, cPasswordController) async{
-  final  _response = await http.post(Uri.parse("http://127.0.0.1:8000/api/createuser").replace(host: '10.0.2.2'),
+  post_data(
+      TextEditingController nameController,
+      TextEditingController emailController,
+      TextEditingController userController,
+      TextEditingController cityController,
+      TextEditingController passwordController,
+      TextEditingController cPasswordController) async {
+    var response = await http.post(
+        Uri.parse("http://127.0.0.1:8000/api/createuser")
+            .replace(host: '10.0.2.2'),
         body: {
-          "name" : nameController.text,
-          "username" : userController.text,
-          "email" : emailController.text,
-          "city" : cityController.text,
-          "password" : passwordController.text,
-          "c_password" : cPasswordController.text
+          "name": nameController.text,
+          "username": userController.text,
+          "email": emailController.text,
+          "city": cityController.text,
+          "password": passwordController.text,
+          "c_password": cPasswordController.text
         });
-      if(_response.statusCode == 200){
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const login()),
-        );
-      }else{
-        print('Error');
-      }
+    if (response.statusCode == 200 || response.statusCode == 202) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const login()),
+      );
+      var message = jsonDecode(response.body)['Success'];
+      var snackBar = SnackBar(content: Text(message));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else {
+      var message = jsonDecode(response.body)['Error'];
+      var snackBar = SnackBar(content: Text(message));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
+
   final _formKey = GlobalKey<FormState>();
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -250,47 +262,29 @@ class _formSectionState extends State<formSection> {
           const SizedBox(
             height: 30,
           ),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-            child: Text(
-              '_response.statusCode',
-              style: TextStyle(
-                fontSize: 13,
-                color: Color.fromARGB(255, 135, 182, 182)
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          ElevatedButton(onPressed: () => post_data(
-            nameController, 
-            emailController, 
-            userController, 
-            cityController, 
-            passwordController, 
-            cPasswordController
-          ),
-          style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
-                  const Color.fromARGB(255, 153, 219, 204)),
-              elevation: MaterialStateProperty.all(10),
-              overlayColor:
-                  MaterialStateProperty.all(const Color(0xFF68D6CD)),
-              minimumSize: MaterialStateProperty.all(const Size(300, 40)),
-              shape: MaterialStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+          ElevatedButton(
+            onPressed: () {
+              post_data(nameController, emailController, userController,
+                  cityController, passwordController, cPasswordController);
+            },
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(
+                    const Color.fromARGB(255, 153, 219, 204)),
+                elevation: MaterialStateProperty.all(10),
+                overlayColor:
+                    MaterialStateProperty.all(const Color(0xFF68D6CD)),
+                minimumSize: MaterialStateProperty.all(const Size(300, 40)),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
                 ),
-              ),
-              textStyle: MaterialStateProperty.all(const TextStyle(
-                fontSize: 20,
-                color: Colors.red,
-              ))),
-              
-          child: const Text('SIGNUP'),
-          
-        ),
+                textStyle: MaterialStateProperty.all(const TextStyle(
+                  fontSize: 20,
+                  color: Colors.red,
+                ))),
+            child: const Text('SIGNUP'),
+          ),
         ],
       ),
     );
