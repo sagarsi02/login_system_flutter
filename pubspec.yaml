@@ -41,6 +41,8 @@ dependencies:
   convert: ^2.1.0
   # json_response: ^2.3.2
   json_annotation: any
+  shared_preferences: ^0.5.8
+  get: ^4.6.5
 
 dev_dependencies:
   flutter_test:
