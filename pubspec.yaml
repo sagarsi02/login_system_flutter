@@ -43,6 +43,7 @@ dependencies:
   json_annotation: any
   shared_preferences: ^0.5.8
   get: ^4.6.5
+  geolocator: ^9.0.0
 
 dev_dependencies:
   flutter_test:

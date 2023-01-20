@@ -1,9 +1,12 @@
+// ignore_for_file: camel_case_types, non_constant_identifier_names, use_build_context_synchronously, unnecessary_null_comparison
+
 import 'package:flutter/material.dart';
-import 'package:flutter_session/flutter_session.dart';
 import 'package:http/http.dart' as http;
+import 'package:login_system/Screen/authPage.dart';
 import 'dart:convert';
 
 import 'package:login_system/app/home.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:shared_preferences/shared_preferences.dart';
 
 class login extends StatefulWidget {
@@ -29,7 +32,11 @@ class _loginState extends State<login> {
                     backgroundColor: const Color(0xFF17D9AD),
                     foregroundColor: Colors.black,
                     onPressed: () {
-                      Navigator.pop(context);
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => const authPage()),
+                      // );
+                      Navigator.pushNamed(context, '/');
                     },
                     child: const Icon(
                       Icons.arrow_back,
@@ -80,20 +87,20 @@ class formSection extends StatefulWidget {
 class _formSectionState extends State<formSection> {
   post_data(TextEditingController userController,
       TextEditingController passwordController) async {
-    var response = await http.post(
-        Uri.parse("http://127.0.0.1:8000/api/login").replace(host: '10.0.2.2'),
-        body: {
-          "username": userController.text,
-          "password": passwordController.text
-        });
+    var response = await http
+        .post(Uri.parse("http://192.168.43.43:8000/api/login"), body: {
+      "username": userController.text,
+      "password": passwordController.text
+    });
     if (response.statusCode == 200) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const MyHome()),
-      );
-      var message = jsonDecode(response.body)['Success'];
-      var snackBar = SnackBar(content: Text(message));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      final cookies = response.headers['set-cookie'];
+      if (cookies!.isNotEmpty && cookies.length > 2) {
+        final authToken = cookies.split(';')[0].split('=')[1];
+        pageRoute(authToken, userController.text);
+        var message = jsonDecode(response.body)['Success'];
+        var snackBar = SnackBar(content: Text(message));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
     } else {
       var message = jsonDecode(response.body)['Error'];
       var snackBar = SnackBar(content: Text(message));
@@ -104,6 +111,23 @@ class _formSectionState extends State<formSection> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController userController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    checkLogin();
+  }
+
+  void checkLogin() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    String val = pref.getString("login");
+    if (val != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const MyHome()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,10 +184,7 @@ class _formSectionState extends State<formSection> {
             height: 50,
           ),
           ElevatedButton(
-            onPressed: () async {
-              final SharedPreferences sharedPreferences =
-                  await SharedPreferences.getInstance();
-              sharedPreferences.setString('username', userController.text);
+            onPressed: () {
               post_data(userController, passwordController);
             },
             style: ButtonStyle(
@@ -187,5 +208,14 @@ class _formSectionState extends State<formSection> {
         ],
       ),
     );
+  }
+
+  void pageRoute(String token, username) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    await pref.setString("login", token);
+    await pref.setString("username", username);
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const MyHome()),
+        (route) => false);
   }
 }

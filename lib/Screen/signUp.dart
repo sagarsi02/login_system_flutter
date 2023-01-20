@@ -85,17 +85,15 @@ class _formSectionState extends State<formSection> {
       TextEditingController cityController,
       TextEditingController passwordController,
       TextEditingController cPasswordController) async {
-    var response = await http.post(
-        Uri.parse("http://127.0.0.1:8000/api/createuser")
-            .replace(host: '10.0.2.2'),
-        body: {
-          "name": nameController.text,
-          "username": userController.text,
-          "email": emailController.text,
-          "city": cityController.text,
-          "password": passwordController.text,
-          "c_password": cPasswordController.text
-        });
+    var response = await http
+        .post(Uri.parse("http://192.168.43.43:8000/api/createuser"), body: {
+      "name": nameController.text,
+      "username": userController.text,
+      "email": emailController.text,
+      "city": cityController.text,
+      "password": passwordController.text,
+      "c_password": cPasswordController.text
+    });
     if (response.statusCode == 200 || response.statusCode == 202) {
       Navigator.push(
         context,
