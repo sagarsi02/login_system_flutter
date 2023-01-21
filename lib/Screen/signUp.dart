@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_session/flutter_session.dart';
 import 'package:http/http.dart' as http;
 import 'package:login_system/Screen/login.dart';
 import 'dart:convert';
@@ -116,6 +115,8 @@ class _formSectionState extends State<formSection> {
   TextEditingController cityController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController cPasswordController = TextEditingController();
+
+  bool isLoading = true;
 
   @override
   Widget build(BuildContext context) {

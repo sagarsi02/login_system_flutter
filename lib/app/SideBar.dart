@@ -46,8 +46,8 @@ class _SideBarState extends State<SideBar> {
   void userCred() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     setState(() {
-      token = pref.getString("login");
-      username = pref.getString("username");
+      token = pref.getString("login")!;
+      username = pref.getString("username")!;
     });
   }
 

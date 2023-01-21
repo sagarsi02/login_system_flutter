@@ -120,7 +120,7 @@ class _formSectionState extends State<formSection> {
 
   void checkLogin() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    String val = pref.getString("login");
+    String? val = pref.getString("login");
     if (val != null) {
       Navigator.push(
         context,

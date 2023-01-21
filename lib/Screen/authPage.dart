@@ -22,7 +22,7 @@ class _authPageState extends State<authPage> {
 
   void checkLogin() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    String val = pref.getString("login");
+    String? val = pref.getString("login");
     if (val != null) {
       Navigator.push(
         context,
